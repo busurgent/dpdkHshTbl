@@ -25,6 +25,7 @@ int main(int argc, char *argv[]) {
     if (ret < 0) 
         rte_panic("Cannot init EAL...\n");
 
+    // Инициализация таблицы
     p.name = "hash";
     p.entries = OTHER_NUMBER;
     p.key_len = sizeof(uint64_t);
@@ -43,7 +44,7 @@ int main(int argc, char *argv[]) {
     tc.cc_shift = __builtin_ctzll(hz); // Сдвиг для циклов в наносекунды
     tc.cycle_last = rte_get_timer_cycles();
 
-
+    // Заполнение таблицы
     for (int i = 0; i < THE_NUMBER; i++) {
         uint64_t key;
         uint64_t *data = malloc(sizeof(uint64_t));
@@ -66,10 +67,10 @@ int main(int argc, char *argv[]) {
             printf("%d k / %d k, time: %ld ns\n", i / 1000, THE_NUMBER / 1000, current_ns);
         }
     }
-
+    // Считаем количество элементов
     count = rte_hash_count(hash);
 
-
+    // Ищем индекс и значение
     start = rte_get_timer_cycles();
     index = rte_hash_lookup_data(hash, &key, &ans);
     end = rte_get_timer_cycles();
@@ -78,7 +79,8 @@ int main(int argc, char *argv[]) {
     if (index >= 0) {
             printf("Hash size: %d, key: %lu, hash idx: %d, data: %lu, lookup time: %ld ns\n", 
                 count, key, index, *(uint64_t*)ans, rte_cyclecounter_cycles_to_ns(&tc, end - start));
-    } else {
+    } 
+    else {
         printf("Key not found. Lookup index: %d, error code: %d\n", index, rte_errno);
     }
 

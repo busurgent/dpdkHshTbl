@@ -11,28 +11,25 @@ prepare:
 	./$(INST)
 	curl -O https://fast.dpdk.org/rel/dpdk-24.03.tar.xz
 	tar -xJf dpdk-24.03.tar.xz
-	cd dpdk-24.03
-	meson setup build
-	cd build
-	ninja
-	sudo meson install
+	meson setup dpdk-24.03.tar.xz
+	ninja -C dpdk-24.03/build
+	sudo meson install -C dpdk-24.03/build
 	sudo ldconfig
-	cd ../../
 	rm -r dpdk-24.03.tar.xz	
 	rm -rf dpdk-24.03
 
 hugapages:
 	echo 2048 | sudo tee /sys/devices/system/node/node0/hugepages/hugepages-2048kB/nr_hugepages >/dev/null
-	mkdir /mnt/huge
-	mount -t hugetlbfs pagesize=1GB /mnt/huge
+	sudo mkdir /mnt/huge
+	sudo mount -t hugetlbfs pagesize=1GB /mnt/huge
 
 build:
 	$(CC) $(CFLAGS) $(DPDK_CFLAGS) $(SRC) -o $(APP) $(DPDK_LDFLAGS)
 
 run:
-	./$(APP)
+	sudo ./$(APP)
 	
 clean: 
 	rm -f $(APP)
-	rm -rf /mnt/huge
+	sudo rm -rf /mnt/huge
 

@@ -1,6 +1,5 @@
 #!/bin/bash
 sudo
-echo "You chose to proceed."
 sudo apt-get update
 if ! command -v curl &> /dev/null
 then
@@ -32,5 +31,5 @@ then
 	sudo apt-get install -y ninja-build
 else
 	echo "ninja is already installed."
-	fi
+fi
 
